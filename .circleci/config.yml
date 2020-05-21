@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+    test-021:
+        docker:
+            - image: circleci/python:3.7.3
+        steps:
+            - run: pip install pytest scikit-learn==0.21.3
+            - run: python -m pytest test.py
+
+    test-022:
+        docker:
+            - image: circleci/python:3.7.3
+        steps:
+            - run: pip install pytest scikit-learn==0.22.2.post1
+            - run: python -m pytest test.py
+
+workflows:
+    test:
+        jobs:
+            - test-022
+            - test-021
