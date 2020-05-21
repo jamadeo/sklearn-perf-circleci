@@ -1,22 +1,30 @@
 version: 2.1
 
 jobs:
-    test-021:
+    test-021: &test-job
+        environment:
+            SKLEARN_VERSION: 0.21.3
         docker:
             - image: circleci/python:3.7.3
         steps:
-            - run: pip install pytest scikit-learn==0.21.3
-            - run: python -m pytest test.py
+            - checkout
+            - run: pip install --user pytest scikit-learn==$SKLEARN_VERSION
+            - run: python test.py
 
     test-022:
-        docker:
-            - image: circleci/python:3.7.3
-        steps:
-            - run: pip install pytest scikit-learn==0.22.2.post1
-            - run: python -m pytest test.py
+        <<: *test-job
+        environment:
+            SKLEARN_VERSION: 0.22.2.post1
+
+    test-022-limited-threads:
+        <<: *test-job
+        environment:
+            SKLEARN_VERSION: 0.22.2.post1
+            OMP_NUM_THREADS: 1
 
 workflows:
     test:
         jobs:
-            - test-022
             - test-021
+            - test-022
+            - test-022-limited-threads
